@@ -65,7 +65,7 @@
   {La Pirámide de Pruebas y el Rol del E2E}
   {Arquitectura y Ventajas de Playwright}
   {Locators Resilientes y Page Object Model (POM)}
-  {Network Mocking, Diagnóstico y CI/CD Headless}
+  {Network Mocking, CI/CD y Living Documentation}
 
 % ==============================================================================
 % SECCIÓN 1: LA PIRÁMIDE DE PRUEBAS Y EL ROL DEL E2E
@@ -137,7 +137,7 @@
   {La Pirámide de Pruebas y el Rol del E2E}
   {Arquitectura y Ventajas de Playwright}
   {Locators Resilientes y Page Object Model (POM)}
-  {Network Mocking, Diagnóstico y CI/CD Headless}
+  {Network Mocking, CI/CD y Living Documentation}
 
 \sectionSlideSolid{02}{Arquitectura de Playwright}{De Selenium WebDriver a la conexión nativa por WebSocket}
 
@@ -194,7 +194,7 @@
   {La Pirámide de Pruebas y el Rol del E2E}
   {Arquitectura y Ventajas de Playwright}
   {Locators Resilientes y Page Object Model (POM)}
-  {Network Mocking, Diagnóstico y CI/CD Headless}
+  {Network Mocking, CI/CD y Living Documentation}
 
 \sectionSlideSolid{03}{Locators Resilientes y POM}{Diseño mantenible y selectores basados en accesibilidad W3C/ARIA}
 
@@ -310,9 +310,9 @@ test('debe registrar un producto',
   {La Pirámide de Pruebas y el Rol del E2E}
   {Arquitectura y Ventajas de Playwright}
   {Locators Resilientes y Page Object Model (POM)}
-  {Network Mocking, Diagnóstico y CI/CD Headless}
+  {Network Mocking, CI/CD y Living Documentation}
 
-\sectionSlideSolid{04}{Network Mocking y Diagnóstico}{Control total de la capa de red y depuración con Trace Viewer}
+\sectionSlideSolid{04}{Network Mocking, CI/CD y Guías}{Control de red, pipelines desatendidos y documentación viva}
 
 % Diapositiva 4.1: Intercepción de Red (Network Mocking)
 \begin{frame}[fragile]{Intercepción de Red con \texttt{page.route()}}
@@ -413,6 +413,69 @@ npx playwright show-report
     }
   }
 
+% Diapositiva 4.4: Living Documentation
+\contentSlideTwoCols{Más Allá del Test: Pruebas E2E como Living Documentation}
+  {El Problema: Documentation Drift}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Desincronización inevitable:} Los manuales estáticos en Word, wikis o Confluence quedan obsoletos tras el primer rediseño de interfaz.
+      \item \textbf{Capturas obsoletas:} Capturar pantallas a mano consume horas de ingeniería y muestra textos o botones desactualizados.
+      \item \textbf{Brecha de confianza:} Soporte técnico y usuarios finales dudan de guías que ya no coinciden con la pantalla real.
+    \end{itemize}
+    }
+  }
+  {El Paradigma: Documentación Viva}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Customer Journey ejecutable:} Cada prueba E2E recorre el camino exacto que realiza un usuario en el sistema.
+      \item \textbf{Single Source of Truth:} Si el test pasa en CI/CD, la guía generada está 100\% comprobada contra producción.
+      \item \textbf{Mantenimiento unificado:} Al modificar un flujo en la UI, actualizar la prueba actualiza el manual automáticamente.
+    \end{itemize}
+    }
+  }
+
+% Diapositiva 4.5: Pipeline de Generación de Guías de Usuario
+\begin{frame}[fragile]{Pipeline Automatizado: Del Test al Manual de Usuario}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \textbf{\scriptsize\color{cbDark} Flujo E2E Instrumentado con Pasos y Capturas}
+      \begin{lstlisting}[style=tslst,basicstyle=\ttfamily\fontsize{5.2pt}{6.3pt}\selectfont,aboveskip=3pt,belowskip=2pt]
+test('Guia: Registrar Producto', async ({ page }) => {
+  await test.step('1. Abrir catalogo', async () => {
+    await page.goto('/products');
+    await page.screenshot({ path: 'docs/img/paso_1.png' });
+  });
+
+  await test.step('2. Diligenciar y enviar', async () => {
+    await page.getByLabel('Nombre').fill('Teclado RGB');
+    await page.getByLabel('Precio').fill('240000');
+    await page.screenshot({ path: 'docs/img/paso_2.png' });
+    await page.getByRole('button', { name: 'Registrar' }).click();
+  });
+});
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBorder,arc=4pt,top=4pt,bottom=4pt,left=5pt,right=5pt]
+        {\footnotesize\bfseries\color{cbBlue} Automatización en CI/CD y Valor Real}\par
+        \vspace{0.1cm}
+        {\scriptsize
+        \textbf{1. Capturas siempre frescas:}\par
+        Cada build en CI/CD produce capturas en alta fidelidad con los datos y estilos exactos desplegados.\par\vspace{0.08cm}
+        \textbf{2. Generación multi-formato:}\par
+        Scripts procesan los pasos y capturas para compilar sitios estáticos (Docusaurus/VitePress) o manuales en PDF.\par\vspace{0.08cm}
+        \textbf{3. Trazas como manual interactivo:}\par
+        Playwright Trace Viewer permite a mesas de ayuda inspeccionar el recorrido con video y DOM interactivo.\par\vspace{0.08cm}
+        \textbf{4. Onboarding acelerado:}\par
+        Nuevos miembros del equipo comprenden la arquitectura explorando los flujos vivos documentados.\par
+        }
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % ==============================================================================
 % CONCLUSIONES Y PREGUNTAS DE REFLEXIÓN
 % ==============================================================================
@@ -423,8 +486,8 @@ npx playwright show-report
         {\scriptsize
         \textbf{1. ¿Cuándo pasar de Unitarias a E2E?}\par
         Si un equipo tiene poco tiempo, ¿debería priorizar 100 pruebas unitarias o 5 pruebas E2E críticas de checkout?\par\vspace{0.15cm}
-        \textbf{2. Pruebas Intermitentes (Flaky Tests):}\par
-        ¿Por qué configurar \texttt{retries: 3} en CI suele ser un antipatrón que esconde deuda técnica en la arquitectura?\par
+        \textbf{2. Living Documentation vs Manuales:}\par
+        ¿Cómo reduce el costo operativo de soporte y capacitación generar manuales vivos automáticamente desde pruebas E2E?\par
         }
       \end{tcolorbox}
     \end{column}
