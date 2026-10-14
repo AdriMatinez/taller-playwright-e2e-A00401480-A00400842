@@ -1,0 +1,444 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,arrows.meta,positioning,shadows,calc,fit,backgrounds,decorations.pathreplacing}
+
+% Paquete de estilos personalizados Icesi / Ingesoft V
+\usepackage{custombeamer}
+
+% Colores auxiliares de soporte
+\definecolor{cbBorder}{HTML}{D1D5DB}
+\definecolor{cbRowLight}{HTML}{F3F4F6}
+\definecolor{cbCardBg}{HTML}{F9FAFB}
+\definecolor{cbCodeBg}{HTML}{F4F4F8}
+\definecolor{cbPlaywrightGreen}{HTML}{2EAD33}
+\definecolor{cbRedAlert}{HTML}{DC2626}
+
+% Configuración de listings para TypeScript / Bash
+\lstdefinestyle{tslst}{
+    backgroundcolor=\color{cbCodeBg},
+    basicstyle=\ttfamily\fontsize{6.2pt}{7.5pt}\selectfont,
+    keywordstyle=\color{cbBlue}\bfseries,
+    commentstyle=\color{cbMuted}\itshape,
+    stringstyle=\color{cbOrange},
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{cbBorder},
+    showstringspaces=false,
+    tabsize=2,
+    morekeywords={test,expect,async,await,describe,beforeEach,page,locator,goto,fill,click,toBeVisible,toHaveText,route,fulfill}
+}
+
+\lstdefinestyle{bashlst}{
+    backgroundcolor=\color{cbCodeBg},
+    basicstyle=\ttfamily\fontsize{6.5pt}{7.8pt}\selectfont,
+    keywordstyle=\color{cbBlue}\bfseries,
+    commentstyle=\color{cbMuted}\itshape,
+    stringstyle=\color{cbOrange},
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{cbBorder},
+    showstringspaces=false,
+    tabsize=2
+}
+
+\begin{document}
+
+% ==============================================================================
+% PORTADA
+% ==============================================================================
+\titleSlideDarkMode
+  {Pruebas End-to-End (E2E) con Playwright}
+  {Cúspide de la Pirámide de Pruebas, Auto-Waiting, POM y Validación en CI/CD}
+  {Prof. Alejandro Muñoz Bravo}
+  {Ingeniería de Software V $\bullet$ Universidad ICESI — Período 2026-2}
+
+% ==============================================================================
+% AGENDA GENERAL
+% ==============================================================================
+\agendaSlideProgress{Ruta de Aprendizaje de la Sesión}{1}
+  {La Pirámide de Pruebas y el Rol del E2E}
+  {Arquitectura y Ventajas de Playwright}
+  {Locators Resilientes y Page Object Model (POM)}
+  {Network Mocking, Diagnóstico y CI/CD Headless}
+
+% ==============================================================================
+% SECCIÓN 1: LA PIRÁMIDE DE PRUEBAS Y EL ROL DEL E2E
+% ==============================================================================
+\sectionSlideSolid{01}{La Pirámide de Pruebas}{De la verificación unitaria a la experiencia real del usuario}
+
+% Diapositiva 1.1: Límites de las Pruebas Unitarias
+\contentSlideBulletCard{¿Por qué las pruebas unitarias no son suficientes?}
+  {
+    {\small
+    En sistemas web desacoplados (React + Spring Boot):
+    \begin{itemize}
+      \item \textbf{Éxito aislado:} Las pruebas unitarias validan lógica de clases y métodos aislados mediante mocks.
+      \item \textbf{Punto ciego de integración:} No prueban serialización JSON, cookies ni compatibilidad de navegador.
+      \item \textbf{Regresiones en UI:} No detectan si un botón quedó oculto por CSS o si el DOM cambió.
+      \item \textbf{Costo de escape:} Los fallos descubiertos en producción por usuarios tienen el mayor costo de resolución.
+    \end{itemize}
+    }
+  }
+  {El Valor del E2E}
+  {
+    Las pruebas \textbf{End-to-End (E2E)} validan el sistema completo exactamente como lo experimenta el usuario final, desde el clic en pantalla hasta la base de datos.
+  }
+
+% Diapositiva 1.2: Anatomía de la Pirámide de Calidad
+\begin{frame}{La Pirámide de Automatización (Cohn / Fowler)}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.485\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBorder,arc=4pt,drop shadow,top=6pt,bottom=6pt,left=6pt,right=6pt]
+        {\footnotesize\bfseries\color{cbBlue} Capas de la Pirámide de Pruebas}\par
+        \vspace{0.15cm}
+        \centering
+        \begin{tikzpicture}[xscale=0.72, yscale=0.72]
+          % Pyramid levels
+          \fill[cbBlue!85] (-3.1,0.4) -- (3.1,0.4) -- (2.1,1.6) -- (-2.1,1.6) -- cycle;
+          \fill[cbPurple!85] (-2.0,1.7) -- (2.0,1.7) -- (1.0,2.9) -- (-1.0,2.9) -- cycle;
+          \fill[cbOrange!90] (-0.9,3.0) -- (0.9,3.0) -- (0,4.2) -- cycle;
+
+          % Labels
+          \node[font=\tiny\bfseries\color{cbWhite}] at (0,0.95) {Unitarias (JUnit 5, JaCoCo)};
+          \node[font=\tiny\bfseries\color{cbWhite}] at (0,2.25) {Integración / APIs};
+          \node[font=\fontsize{5.2pt}{6pt}\selectfont\bfseries\color{cbWhite}] at (0,3.38) {E2E / UI};
+          \node[font=\fontsize{4.8pt}{5.5pt}\selectfont\color{cbWhite}] at (0,3.16) {(Playwright)};
+
+          % Cost arrow
+          \draw[->, thick, cbRedAlert] (2.6,0.5) -- (2.6,4.1) node[midway, right, font=\fontsize{5pt}{6pt}\selectfont\bfseries\color{cbRedAlert}, align=left] {Mayor Costo\\y Lentitud};
+        \end{tikzpicture}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.485\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBorder,arc=4pt,drop shadow,top=6pt,bottom=6pt,left=6pt,right=6pt]
+        {\footnotesize\bfseries\color{cbDark} Distribución y Compromiso}\par
+        \vspace{0.15cm}
+        {\scriptsize
+        \textbf{1. Unitarias (70\%):} Rápidas (ms), deterministas, baratas. Cobertura con JaCoCo.\par\vspace{0.12cm}
+        \textbf{2. Integración (20\%):} Contratos REST, base de datos en contenedores.\par\vspace{0.12cm}
+        \textbf{3. E2E (10\%):} Flujos críticos de negocio (Happy paths y recuperación de errores).\par\vspace{0.12cm}
+        \textit{Peligro: El antipatrón del ``Cono de Helado'' genera suites lentas e inestables.}
+        }
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SECCIÓN 2: ARQUITECTURA Y VENTAJAS DE PLAYWRIGHT
+% ==============================================================================
+\agendaSlideProgress{Ruta de Aprendizaje de la Sesión}{2}
+  {La Pirámide de Pruebas y el Rol del E2E}
+  {Arquitectura y Ventajas de Playwright}
+  {Locators Resilientes y Page Object Model (POM)}
+  {Network Mocking, Diagnóstico y CI/CD Headless}
+
+\sectionSlideSolid{02}{Arquitectura de Playwright}{De Selenium WebDriver a la conexión nativa por WebSocket}
+
+% Diapositiva 2.1: Selenium vs Playwright
+\contentSlideTwoCols{Evolución: Selenium WebDriver vs Playwright}
+  {Selenium (Paradigma Tradicional)}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Protocolo HTTP REST:} Cada comando realiza una petición HTTP al driver.
+      \item \textbf{Polling ineficiente:} Comprobaciones repetitivas de estado en la red.
+      \item \textbf{Flakiness alto:} Sensible a tiempos de carga lentos; proliferación de \texttt{sleep()}.
+      \item \textbf{Aislamiento costoso:} Abrir nuevos navegadores consume alta memoria RAM.
+    \end{itemize}
+    }
+  }
+  {Playwright (Paradigma Moderno)}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Conexión WebSocket única:} Comunicación bidireccional continua con el motor.
+      \item \textbf{Multiplexación de eventos:} Notificación instantánea de cambios en el DOM.
+      \item \textbf{BrowserContexts ultraligeros:} Aislamiento total de cookies/cache en ms.
+      \item \textbf{Multi-motor real:} Soporte Chromium, Firefox y WebKit en Linux/CI.
+    \end{itemize}
+    }
+  }
+
+% Diapositiva 2.2: Auto-Waiting Inteligente
+\contentSlideBulletCard{Auto-Waiting: Eliminando las Pruebas Intermitentes}
+  {
+    {\small
+    Playwright implementa \textbf{Actionability Checks} automáticos antes de cada acción:
+    \begin{itemize}
+      \item \textbf{Attached:} El elemento existe en el árbol del DOM.
+      \item \textbf{Visible:} No tiene \texttt{display:none} ni opacidad 0.
+      \item \textbf{Stable:} Ya terminó las animaciones CSS de renderizado.
+      \item \textbf{Receives Events:} No está bloqueado por overlays o loaders.
+      \item \textbf{Enabled:} El control no se encuentra en estado \texttt{disabled}.
+    \end{itemize}
+    }
+  }
+  {Antipatrón Prohibido}
+  {
+    \textbf{Nunca usar pausas fijas:}\par
+    Usar temporizadores ciegos introduce lentitud e intermitencia.\par
+    Playwright espera activamente resolviendo en el instante exacto en que la condición de accionabilidad se satisface.
+  }
+
+% ==============================================================================
+% SECCIÓN 3: LOCATORS RESILIENTES Y PAGE OBJECT MODEL
+% ==============================================================================
+\agendaSlideProgress{Ruta de Aprendizaje de la Sesión}{3}
+  {La Pirámide de Pruebas y el Rol del E2E}
+  {Arquitectura y Ventajas de Playwright}
+  {Locators Resilientes y Page Object Model (POM)}
+  {Network Mocking, Diagnóstico y CI/CD Headless}
+
+\sectionSlideSolid{03}{Locators Resilientes y POM}{Diseño mantenible y selectores basados en accesibilidad W3C/ARIA}
+
+% Diapositiva 3.1: Locators accesibles y ejemplo
+\begin{frame}[fragile]{Selectores basados en Accesibilidad (W3C / ARIA)}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBorder,arc=4pt,top=5pt,bottom=5pt,left=5pt,right=5pt]
+        {\footnotesize\bfseries\color{cbBlue} Jerarquía de Locators Recomendada}\par
+        \vspace{0.1cm}
+        {\scriptsize
+        \textbf{1. Por Rol (\texttt{getByRole}):}\par
+        Semántica accesible: \texttt{button}, \texttt{heading}, \texttt{dialog}, \texttt{textbox}.\par\vspace{0.1cm}
+        \textbf{2. Por Etiqueta (\texttt{getByLabel}):}\par
+        Asocia el input a su etiqueta \texttt{<label>}.\par\vspace{0.1cm}
+        \textbf{3. Por Texto (\texttt{getByText}):}\par
+        Contenido visible al usuario.\par\vspace{0.1cm}
+        \textbf{4. Test ID (\texttt{getByTestId}):}\par
+        Atributo \texttt{data-testid} cuando el texto varía.\par
+        }
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{\scriptsize\color{cbDark} Ejemplo Práctico en TypeScript}
+      \begin{lstlisting}[style=tslst]
+// Clic resiliente por rol semantico
+await page.getByRole('button', { 
+  name: 'Guardar Producto' 
+}).click();
+
+// Asercion web-first auto-reintentable
+await expect(page.getByRole('alert'))
+  .toHaveText('Guardado exitoso');
+
+// Campo por label accesible
+await page.getByLabel('Nombre:')
+  .fill('Portatil Gamer');
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Diapositiva 3.2: Page Object Model (POM)
+\contentSlideTwoCols{El Patrón de Diseño Page Object Model (POM)}
+  {¿Qué problema resuelve?}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Acoplamiento excesivo:} Si un botón cambia en la UI, decenas de archivos de prueba fallan al tiempo.
+      \item \textbf{Duplicación de código:} Repetición de secuencias de login o llenado de formularios.
+      \item \textbf{Falta de legibilidad:} Pruebas saturadas de selectores HTML en lugar de lógica de negocio.
+    \end{itemize}
+    }
+  }
+  {Estructura y Reglas POM}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Clase por Página/Componente:} Encapsula los locators y métodos de interacción (ej. \texttt{ProductPage.ts}).
+      \item \textbf{Separación estricta:} El Page Object interactúa con el DOM; el archivo de prueba (\texttt{*.spec.ts}) contiene las aserciones (\texttt{expect}).
+      \item \textbf{Mantenibilidad:} Un cambio de UI solo requiere actualizar la clase POM en un único lugar.
+    \end{itemize}
+    }
+  }
+
+% Diapositiva 3.3: Ejemplo POM
+\begin{frame}[fragile]{Estructura Canónica de un Page Object Model (POM)}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \textbf{\scriptsize\color{cbBlue} Page Object: \texttt{ProductPage.ts}}
+      \begin{lstlisting}[style=tslst]
+export class ProductPage {
+  readonly page: Page;
+  readonly nameInput: Locator;
+  readonly saveBtn: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.nameInput = page.getByLabel('Nombre:');
+    this.saveBtn = page.getByRole('button', 
+      { name: 'Guardar' });
+  }
+
+  async createProduct(name: string) {
+    await this.nameInput.fill(name);
+    await this.saveBtn.click();
+  }
+}
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \textbf{\scriptsize\color{cbPurple} Archivo de Prueba: \texttt{products.spec.ts}}
+      \begin{lstlisting}[style=tslst]
+test('debe registrar un producto', 
+  async ({ page }) => {
+  const productPage = new ProductPage(page);
+  await page.goto('/products');
+
+  await productPage.createProduct('Teclado');
+
+  await expect(page.getByRole('cell', 
+    { name: 'Teclado' })).toBeVisible();
+});
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SECCIÓN 4: NETWORK MOCKING, DIAGNÓSTICO Y CI/CD
+% ==============================================================================
+\agendaSlideProgress{Ruta de Aprendizaje de la Sesión}{4}
+  {La Pirámide de Pruebas y el Rol del E2E}
+  {Arquitectura y Ventajas de Playwright}
+  {Locators Resilientes y Page Object Model (POM)}
+  {Network Mocking, Diagnóstico y CI/CD Headless}
+
+\sectionSlideSolid{04}{Network Mocking y Diagnóstico}{Control total de la capa de red y depuración con Trace Viewer}
+
+% Diapositiva 4.1: Intercepción de Red (Network Mocking)
+\begin{frame}[fragile]{Intercepción de Red con \texttt{page.route()}}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBorder,arc=4pt,top=5pt,bottom=5pt,left=5pt,right=5pt]
+        {\footnotesize\bfseries\color{cbBlue} Escenarios de Prueba de Red}\par
+        \vspace{0.1cm}
+        {\scriptsize
+        \textbf{1. Inyección de fallos HTTP:}\par
+        Simular respuestas 500 Internal Server Error o 401 Unauthorized sin apagar el backend.\par\vspace{0.1cm}
+        \textbf{2. Simulación de latencia:}\par
+        Añadir retrasos artificiales para validar spinners y estados de carga.\par\vspace{0.1cm}
+        \textbf{3. Aislamiento de terceros:}\par
+        Mockear pasarelas de pago o servicios externos.\par
+        }
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \textbf{\scriptsize\color{cbDark} Simulación de Fallo de Servidor}
+      \begin{lstlisting}[style=tslst]
+test('maneja error 500 del servidor', 
+  async ({ page }) => {
+  // Interceptar la API REST
+  await page.route('**/api/v1/products', 
+    async route => {
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ 
+          error: 'Fallo de conexion' 
+        })
+      });
+  });
+
+  await page.goto('/products');
+  await expect(page.getByRole('alert'))
+    .toHaveText('Error al cargar datos');
+});
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Diapositiva 4.2: Herramientas de Diagnóstico: Trace Viewer
+\begin{frame}[fragile]{Diagnóstico Forense: Playwright Trace Viewer}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBorder,arc=4pt,top=5pt,bottom=5pt,left=5pt,right=5pt]
+        {\footnotesize\bfseries\color{cbBlue} Capacidades de Inspección Post-Fallo}\par
+        \vspace{0.1cm}
+        {\scriptsize
+        \textbf{1. Grabación paso a paso:}\par
+        Registra cada micro-evento del DOM, captura de pantalla y llamada de red.\par\vspace{0.1cm}
+        \textbf{2. Explorador temporal:}\par
+        Permite retroceder en el tiempo y colocar el cursor sobre cada segundo de la prueba.\par\vspace{0.1cm}
+        \textbf{3. Logs de accionabilidad:}\par
+        Explica por qué un clic falló (ej. ``el elemento tardó más del timeout en ser visible'').\par
+        }
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{\scriptsize\color{cbDark} Comandos Esenciales de Diagnóstico}
+      \begin{lstlisting}[style=bashlst]
+# Ejecutar con trazas al reintentar:
+npx playwright test --trace on-first-retry
+
+# Abrir el visor interactivo de trazas:
+npx playwright show-trace trace.zip
+
+# Inspeccionar reporte HTML completo:
+npx playwright show-report
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Diapositiva 4.3: Ejecución Headless en CI/CD
+\contentSlideTwoCols{Integración en Pipelines de CI/CD (GitHub Actions / Jenkins)}
+  {Ejecución Desatendida (Headless)}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item Se ejecuta sin entorno gráfico (\texttt{HEADLESS=true}).
+      \item Consume contenedores o runners efímeros con los navegadores instalados vía \texttt{npx playwright install --with-deps}.
+      \item Ejecución paralela masiva por cores o nodos (\textit{Sharding}).
+    \end{itemize}
+    }
+  }
+  {Políticas y Artefactos en CI}
+  {
+    {\footnotesize
+    \begin{itemize}
+      \item \textbf{Retries controlados:} Permite 1 reintento para aislar fallos intermitentes de red.
+      \item \textbf{Publicación de artefactos:} Almacena el reporte HTML y los videos/trazas únicamente si el job falla.
+      \item \textbf{Quality Gate final:} Si la suite E2E falla, el pipeline bloquea la promoción a producción.
+    \end{itemize}
+    }
+  }
+
+% ==============================================================================
+% CONCLUSIONES Y PREGUNTAS DE REFLEXIÓN
+% ==============================================================================
+\begin{frame}{Preguntas de Reflexión y Discusión Profesional}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.485\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbBlue,arc=4pt,title=\textbf{Gobernanza y Estrategia},coltitle=cbWhite,fonttitle=\scriptsize\bfseries]
+        {\scriptsize
+        \textbf{1. ¿Cuándo pasar de Unitarias a E2E?}\par
+        Si un equipo tiene poco tiempo, ¿debería priorizar 100 pruebas unitarias o 5 pruebas E2E críticas de checkout?\par\vspace{0.15cm}
+        \textbf{2. Pruebas Intermitentes (Flaky Tests):}\par
+        ¿Por qué configurar \texttt{retries: 3} en CI suele ser un antipatrón que esconde deuda técnica en la arquitectura?\par
+        }
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.485\textwidth}
+      \begin{tcolorbox}[colback=cbWhite,colframe=cbPurple,arc=4pt,title=\textbf{Arquitectura y Mantenibilidad},coltitle=cbWhite,fonttitle=\scriptsize\bfseries]
+        {\scriptsize
+        \textbf{3. Mantenibilidad con POM:}\par
+        ¿Qué riesgos asume un proyecto grande que escribe selectores directamente en los scripts de prueba sin Page Objects?\par\vspace{0.15cm}
+        \textbf{4. Network Mocking vs Backend Real:}\par
+        ¿En qué etapa de la entrega continua es preferible mockear el backend y en cuál es obligatorio probar contra base de datos real?\par
+        }
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\end{document}

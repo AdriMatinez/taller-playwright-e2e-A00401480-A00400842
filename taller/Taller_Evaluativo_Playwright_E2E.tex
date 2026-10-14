@@ -1,0 +1,339 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{geometry}
+\geometry{margin=0.68in, top=0.85in, bottom=0.78in, headheight=36pt, headsep=14pt}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{lastpage}
+\usepackage{setspace}
+\usepackage{listings}
+
+% Tipografía institucional Icesi (Sans-Serif Helvetica)
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Interlineado aumentado un 30% (setstretch 1.38) para mayor holgura y lectura óptima
+\setstretch{1.38}
+
+% Altura de celdas en tablas
+\renewcommand{\arraystretch}{1.25}
+
+% Paleta de Colores Oficial de los Programas Icesi
+\definecolor{icesiBlue}{HTML}{5454E9}       % Azul vibrante institucional
+\definecolor{icesiOrange}{HTML}{F0681A}     % Naranja acento
+\definecolor{icesiGreen}{HTML}{4CB978}      % Verde acento
+\definecolor{icesiPurple}{HTML}{865CF0}     % Púrpura acento
+\definecolor{icesiDark}{HTML}{1A1A1A}       % Texto principal oscuro
+\definecolor{icesiMuted}{HTML}{6B7280}      % Gris metadatos
+\definecolor{icesiBorder}{HTML}{D1D5DB}     % Líneas y bordes
+\definecolor{icesiRowLine}{HTML}{E5E7EB}    % Líneas de tabla
+\definecolor{icesiLight}{HTML}{F9FAFB}      % Fondo suave
+\definecolor{codeBackground}{HTML}{F3F4F6}  % Fondo código
+
+% Configuración de Listings
+\lstdefinestyle{bashstyle}{
+    backgroundcolor=\color{codeBackground},
+    commentstyle=\color{icesiMuted}\itshape,
+    keywordstyle=\color{icesiBlue}\bfseries,
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{icesiBorder},
+    language=bash,
+    aboveskip=2pt,
+    belowskip=2pt
+}
+
+\lstdefinestyle{codeStyle}{
+    backgroundcolor=\color{codeBackground},
+    commentstyle=\color{icesiMuted}\itshape,
+    keywordstyle=\color{icesiBlue}\bfseries,
+    stringstyle=\color{icesiGreen},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{icesiBorder},
+    aboveskip=2pt,
+    belowskip=2pt
+}
+
+% =========================================================================
+% ENCABEZADO Y PIE DE PÁGINA ESTILO PROGRAMA DE CURSO ICESI
+% =========================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{%
+  \begin{minipage}[c]{2.8cm}
+    \includegraphics[height=0.58cm]{logo-icesi.png}
+  \end{minipage}%
+  \hspace{0.15cm}%
+  {\color{icesiBorder}\vrule width 0.8pt height 0.60cm}%
+  \hspace{0.2cm}%
+  \begin{minipage}[c]{10.5cm}
+    \fontsize{7.5}{9.5}\selectfont\textbf{\color{icesiDark}UNIVERSIDAD ICESI} \\
+    \fontsize{7}{9}\selectfont\textbf{\color{icesiDark}PROGRAMA DE CURSO / TALLER EVALUATIVO: INGENIERÍA DE SOFTWARE V} \\
+    \fontsize{6.5}{8.5}\selectfont\color{icesiMuted}Período: 202620 $\bullet$ NRC: 11005 $\bullet$ Duración Máxima: 2 Horas
+  \end{minipage}%
+}
+\fancyhead[R]{\fontsize{7.5}{9.5}\selectfont\color{icesiMuted}Pág. \thepage\ de \pageref{LastPage}}
+
+% Barra horizontal multicolor característica del programa de curso
+\renewcommand{\headrule}{%
+  \vspace{0.08cm}%
+  \noindent%
+  \textcolor{icesiBlue}{\rule{0.60\textwidth}{1.8pt}}%
+  \textcolor{icesiOrange}{\rule{0.18\textwidth}{1.8pt}}%
+  \textcolor{icesiGreen}{\rule{0.11\textwidth}{1.8pt}}%
+  \textcolor{icesiPurple}{\rule{0.11\textwidth}{1.8pt}}%
+}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[L]{\fontsize{7.5}{9.5}\selectfont\color{icesiMuted}Ingeniería de Software V (09776 - TIC) $\bullet$ Taller Pruebas E2E con Playwright \& CI/CD}
+\fancyfoot[R]{\fontsize{7.5}{9.5}\selectfont\color{icesiMuted}Universidad Icesi $\bullet$ DCSI}
+
+% =========================================================================
+% COMANDOS DE SECCIONES CON BADGE ESTILO PROGRAMA ICESI
+% =========================================================================
+\newcommand{\sectionBadge}[1]{%
+  \refstepcounter{section}%
+  \vspace{0.16cm}%
+  \noindent%
+  \colorbox{icesiBlue}{\color{white}\rule[-0.08cm]{0pt}{0.42cm}\hspace{0.16cm}\textbf{\normalsize \thesection}\hspace{0.16cm}}%
+  \hspace{0.18cm}%
+  {\fontsize{9.5}{12}\selectfont\textbf{\color{icesiDark}#1}}\\[-0.10cm]%
+  \noindent{\color{icesiDark}\rule{\textwidth}{0.8pt}}\vspace{0.06cm}%
+}
+
+\titleformat{\subsection}
+  {\color{icesiBlue}\normalfont\normalsize\bfseries}
+  {\thesubsection}{0.4em}{}
+\titlespacing*{\subsection}{0pt}{0.4ex plus 0.2ex minus .1ex}{0.2ex plus .1ex}
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\begin{document}
+
+% =========================================================================
+% TÍTULO Y PRESENTACIÓN INICIAL (PÁGINA 1)
+% =========================================================================
+\noindent
+{\fontsize{8.5}{11}\selectfont\textbf{\color{icesiBlue}TALLER EVALUATIVO: PRUEBAS END-TO-END (E2E) CON PLAYWRIGHT \& CI/CD (TIEMPO: 2 HORAS)}}\\[0.06cm]
+{\fontsize{15}{18}\selectfont\textbf{Ingeniería de Software V}}\\[0.10cm]
+{\color{icesiRowLine}\hrule height 0.6pt}\vspace{0.10cm}
+
+\noindent
+{\color{icesiBlue}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont FACULTAD DE INGENIERÍA, DISEÑO Y CIENCIAS APLICADAS} \hfill
+{\color{icesiOrange}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont DEPARTAMENTO DE COMPUTACIÓN Y SISTEMAS INTELIGENTES}\\[0.06cm]
+{\color{icesiRowLine}\hrule height 0.6pt}\vspace{0.10cm}
+
+% =========================================================================
+% TABLA DE INFORMACIÓN Y METADATOS (ESTILO PROGRAMA DE CURSO)
+% =========================================================================
+\noindent
+{\color{icesiBlue}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont INFORMACIÓN DE LA ACTIVIDAD} \hfill {\fontsize{7.5}{9}\selectfont\color{icesiMuted}\textbf{IDENTIFICACIÓN}}\\[-0.22cm]
+{\color{icesiBorder}\hrule height 0.5pt}\vspace{0.05cm}
+
+\noindent
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries\color{icesiDark}\fontsize{7.5}{9.5}\selectfont}L{2.5cm}X!{\color{icesiBlue}\vrule width 0.8pt}>{\bfseries\color{icesiDark}\fontsize{7.5}{9.5}\selectfont}L{2.5cm}X}
+CÓDIGO: & 09776 - TIC & PERÍODO: & 202620 (Semestre 2026-2) \\ \hline
+\rowcolor{icesiLight}
+NRC / GRUPO: & 11005 / Grupo 001 & PONDERACIÓN: & 15.0\% (Taller Evaluativo) $\bullet$ Duración: 2 Horas \\ \hline
+POLÍTICA IAG: & Nivel 3: Colaboración Asistida & CALIFICACIÓN: & \rule{1.5cm}{0.4pt} / 5.0 \\ \hline
+\rowcolor{icesiLight}
+ESTUDIANTE 1: & \rule{4.5cm}{0.4pt} & CÓDIGO: & \rule{2.2cm}{0.4pt} \\ \hline
+ESTUDIANTE 2: & \rule{4.5cm}{0.4pt} & CÓDIGO: & \rule{2.2cm}{0.4pt} \\ \hline
+\end{tabularx}
+
+\vspace{0.10cm}
+
+% =========================================================================
+% SECCIÓN 1: CONTEXTO Y DESCRIPCIÓN DEL RETO
+% =========================================================================
+\sectionBadge{Contexto del Problema \& Aseguramiento de Calidad E2E}
+
+\subsection{Descripción del Desafío de Ingeniería de Software}
+La organización \textbf{Icesi Cloud Solutions} opera una plataforma de comercio desacoplada compuesta por un Backend REST en \textbf{Spring Boot 3 (Java 17)} y un cliente web en \textbf{React 18 + Vite + TypeScript}.
+
+Aunque el equipo cuenta con pruebas unitarias en Maven que reportan 100\% de éxito, despliegues recientes a producción generaron fallas críticas de usuario: regresiones en formularios asíncronos, inconsistencias entre navegadores (Chromium, Firefox y WebKit) y congelamiento de la interfaz ante caídas de red.
+
+El objetivo de este taller es estructurar una suite profesional de pruebas automatizadas \textbf{End-to-End (E2E)} con \textbf{Playwright}, implementando el patrón \textbf{Page Object Model (POM)}, localizadores resilientes basados en accesibilidad (\textbf{W3C / ARIA}), simulación de contingencias (\textbf{Network Mocking}) e integración continua en \textbf{GitHub Actions} con publicación automatizada de reportes y trazas.
+
+\vspace{0.08cm}
+\noindent
+\small
+\begin{tabularx}{\textwidth}{|L{2.8cm}|X|L{3.5cm}|}
+\hline
+\rowcolor{icesiLight}
+\textbf{Componente} & \textbf{Tecnología \& Stack} & \textbf{Puerto / Endpoint} \\ \hline
+\textbf{Backend REST} & Spring Boot 3.2, Spring Security (JWT), H2 & Puerto \texttt{8080} (\texttt{/api/v1/orders}) \\ \hline
+\textbf{Frontend SPA} & React 18, TypeScript, Vite, TailwindCSS & Puerto \texttt{3000} (\texttt{http://localhost:3000}) \\ \hline
+\textbf{Suite E2E} & Playwright Test Runner v1.42+, TypeScript & Motores: Chromium, Firefox, WebKit \\ \hline
+\textbf{CI/CD Automation} & GitHub Actions (\texttt{e2e-playwright.yml}) & Headless Execution + HTML Report \\ \hline
+\end{tabularx}
+
+\newpage
+
+% =========================================================================
+% PÁGINA 2: PROCEDIMIENTO EXPERIMENTAL (FASES 1 Y 2)
+% =========================================================================
+\sectionBadge{Procedimiento Experimental \& Tareas a Desarrollar}
+
+\subsection{Fase 1: Configuración de Playwright, Tooling y Multi-Navegador (25 min)}
+En el directorio raíz del proyecto de pruebas:
+\begin{enumerate}[leftmargin=*,label=\textbf{\alph*)},itemsep=1.5pt,topsep=1.5pt]
+  \item Inicialice la estructura de pruebas asegurando soporte TypeScript y navegadores oficiales:
+  \begin{lstlisting}[style=bashstyle]
+npm init playwright@latest --yes -- --typescript --browsers=all --github-actions
+  \end{lstlisting}
+  \item Configure el archivo central \texttt{playwright.config.ts} cumpliendo con los siguientes parámetros:
+  \begin{itemize}[itemsep=1pt]
+    \item \texttt{baseURL: 'http://localhost:3000'} con timeout por prueba de 30 segundos.
+    \item Política de reintentos en CI: \texttt{retries: process.env.CI ? 2 : 0} para mitigar latencias de red.
+    \item Diagnóstico: \texttt{trace: 'on-first-retry'}, capturas automáticas (\texttt{screenshot: 'only-on-failure'}) y grabación (\texttt{video: 'retain-on-failure'}).
+    \item Proyectos de ejecución multi-motor: \texttt{chromium}, \texttt{firefox} y \texttt{webkit}.
+  \end{itemize}
+  \item Incorpore en \texttt{package.json} los scripts: \texttt{"test:e2e": "playwright test"}, \texttt{"test:e2e:ui": "playwright test --ui"}, y \texttt{"test:e2e:report": "playwright show-report"}.
+\end{enumerate}
+
+\subsection{Fase 2: Patrón Page Object Model (POM) y Flujos Críticos de Negocio (45 min)}
+Desacople la interacción de la interfaz de la lógica de aserción creando clases modulares en \texttt{e2e/pages/}:
+\begin{enumerate}[leftmargin=*,label=\textbf{\alph*)},itemsep=1.5pt,topsep=1.5pt]
+  \item \textbf{Clase \texttt{LoginPage.ts}:}
+    \begin{itemize}[itemsep=1pt]
+      \item Encapsule la navegación a la vista (\texttt{goto('/login')}).
+      \item Defina localizadores semánticos basados en ARIA: \texttt{page.getByRole('textbox', \{ name: /usuario|correo/i \})}, \texttt{page.getByLabel(/contraseña/i)}, y \texttt{page.getByRole('button', \{ name: /iniciar sesión|ingresar/i \})}.
+      \item Implemente el método \texttt{async login(user, pass)} y el localizador de alertas: \texttt{page.getByRole('alert')}.
+    \end{itemize}
+  \item \textbf{Clase \texttt{CatalogPage.ts}:}
+    \begin{itemize}[itemsep=1pt]
+      \item Localizador para el buscador: \texttt{page.getByPlaceholder(/buscar productos/i)}.
+      \item Método para filtrar y seleccionar un producto: \texttt{page.getByRole('article').filter(\{ hasText: name \})}.
+      \item Método para agregar al carrito y consultar la cantidad del badge: \texttt{getCartBadgeCount()}.
+    \end{itemize}
+  \item \textbf{Clase \texttt{CheckoutPage.ts}:}
+    \begin{itemize}[itemsep=1pt]
+      \item Validación de subtotales y diligenciamiento de entrega.
+      \item Confirmación de compra con \texttt{page.getByRole('button', \{ name: /confirmar orden/i \})}.
+      \item Verificación del modal de confirmación con el identificador de orden generado.
+    \end{itemize}
+  \item \textbf{Suite de Pruebas (\texttt{tests/e2e/order-lifecycle.spec.ts}):}
+    \begin{itemize}[itemsep=1pt]
+      \item \textit{Test 1 (Camino Feliz):} Login $\rightarrow$ Catálogo $\rightarrow$ Agregar al carrito $\rightarrow$ Checkout $\rightarrow$ Aserción web-first de compra exitosa (\texttt{expect(modal).toBeVisible()}).
+      \item \textit{Test 2 (Credenciales Inválidas):} Intento de acceso erróneo $\rightarrow$ Aserción de alerta visible sin redirección de URL (\texttt{expect(page).toHaveURL(/login/)}).
+      \item \textit{Test 3 (Restricciones):} Comprobar que el botón de pago esté deshabilitado (\texttt{toBeDisabled()}) con carrito vacío.
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+
+% =========================================================================
+% PÁGINA 3: FASE 3, FASE 4 Y CUESTIONARIO TÉCNICO
+% =========================================================================
+\subsection{Fase 3: Interceptación de Red (Network Mocking) y Resiliencia (25 min)}
+En el archivo \texttt{tests/e2e/network-resilience.spec.ts}, valide la tolerancia a fallos del frontend:
+\begin{enumerate}[leftmargin=*,label=\textbf{\alph*)},itemsep=1.5pt,topsep=1.5pt]
+  \item \textbf{Simulación de Error 500 en Checkout:} Interceptar con \texttt{page.route()} la petición \texttt{POST **/api/v1/orders} forzando código HTTP 500:
+    \begin{lstlisting}[style=codeStyle]
+await page.route('**/api/v1/orders', async (route) => {
+  await route.fulfill({ status: 500, contentType: 'application/json',
+    body: JSON.stringify({ message: 'Error interno en pasarela de pagos' }) });
+});
+    \end{lstlisting}
+    Valide mediante aserciones web-first que la interfaz muestre el diálogo de reintento sin congelarse.
+  \item \textbf{Simulación de Latencia de Red:} Intercepte \texttt{GET **/api/v1/products} agregando un retraso artificial de 3000 ms. Verifique que durante la espera se despliegue el indicador visual (\textit{spinner} o \textit{skeleton}) y se oculte tras completar la carga.
+  \item \textbf{Diagnóstico con Trace Viewer:} Ejecute \texttt{npx playwright test --trace on} e inspeccione con \texttt{npx playwright show-trace} eventos DOM, llamadas HTTP y capturas paso a paso.
+\end{enumerate}
+
+\subsection{Fase 4: Pipeline Declarativo en GitHub Actions (15 min)}
+Configure el flujo de integración continua en \texttt{.github/workflows/e2e-playwright.yml}:
+\begin{enumerate}[leftmargin=*,label=\textbf{\alph*)},itemsep=1.5pt,topsep=1.5pt]
+  \item Disparador ante eventos \texttt{push} y \texttt{pull\_request} hacia ramas de entrega.
+  \item Job sobre \texttt{ubuntu-latest} con instalación de Node 20 y navegadores con dependencias:
+  \begin{lstlisting}[style=bashstyle]
+- name: Install dependencies & Playwright Browsers
+  run: npm ci && npx playwright install --with-deps
+- name: Run Playwright tests
+  run: npx playwright test
+  \end{lstlisting}
+  \item Publicación del reporte HTML como artefacto descargable con retención de 30 días (\texttt{if: always()}):
+  \begin{lstlisting}[style=codeStyle]
+- uses: actions/upload-artifact@v4
+  if: always()
+  with: { name: playwright-report, path: playwright-report/ }
+  \end{lstlisting}
+\end{enumerate}
+
+\vspace{0.06cm}
+
+% =========================================================================
+% SECCIÓN 3: PREGUNTAS DE ANÁLISIS TÉCNICO
+% =========================================================================
+\sectionBadge{Cuestionario de Análisis Conceptual \& Bitácora IAG (10 min)}
+
+Responda brevemente a las siguientes preguntas con base en la práctica de laboratorio:
+\begin{enumerate}[leftmargin=*,label=\textbf{\arabic*.},itemsep=2pt,topsep=1.5pt]
+  \item \textbf{Localizadores Semánticos vs Frágiles:} ¿Por qué se desaconseja XPath o CSS acoplados al DOM en favor de métodos ARIA (\texttt{getByRole})? ¿Qué ventajas otorga ante refactorizaciones y accesibilidad WCAG?
+  \item \textbf{Aislamiento de Contextos (\textit{BrowserContext}):} Compare la apertura de contextos en una sola instancia de Chromium frente a levantar procesos independientes (Selenium) en velocidad, memoria y aislamiento.
+  \item \textbf{Network Mocking vs E2E Puros:} ¿Cuándo conviene interceptar llamadas con \texttt{page.route()} y cuándo es indispensable probar contra microservicios y bases de datos reales? ¿Qué riesgos acarrea abusar de mocks?
+  \item \textbf{Pruebas Intermitentes (\textit{Flaky Tests}):} Explique cómo el \textit{auto-waiting} de Playwright elimina pausas fijas (\texttt{sleep}). ¿Es la política de \texttt{retries} en CI una solución definitiva o paliativa?
+  \item \textbf{Bitácora y Uso Ético de IAG (Nivel 3):} ¿Qué herramientas de IA utilizó para estructurar clases POM o fixtures? ¿Qué alucinaciones o errores detectó y cómo los corrigió técnicamente?
+\end{enumerate}
+
+\newpage
+
+% =========================================================================
+% PÁGINA 4: RÚBRICA MODULARIZADA DE EVALUACIÓN Y ENTREGA
+% =========================================================================
+\sectionBadge{Rúbrica de Evaluación Modularizada por Punto (Escala 0.0 a 5.0)}
+
+\vspace{0.08cm}
+\noindent
+\setlength{\tabcolsep}{3.5pt}
+\fontsize{7.5}{9.5}\selectfont
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\textwidth}{|L{2.5cm}|C{0.6cm}|X|X|X|}
+\hline
+\rowcolor{icesiLight}
+\textbf{Punto Entregable} & \textbf{Pts} & \textbf{Excelente (4.5 -- 5.0)} & \textbf{Aceptable (3.0 -- 4.4)} & \textbf{Insuficiente (0.0 -- 2.9)} \\ \hline
+\textbf{2.1. Configuración Playwright \& Tooling} & \textbf{0.8} & Configuración completa en \texttt{playwright.config.ts} multi-navegador (Chromium, Firefox, WebKit), trazas en fallo y scripts npm limpios. & Configuración básica en un solo motor de renderizado o sin políticas de diagnóstico en fallos. & Proyecto no inicializa correctamente o faltan dependencias del sistema operativo. \\ \hline
+\textbf{2.2. Page Object Model \& Flujos Críticos} & \textbf{1.5} & Clases POM limpias en \texttt{pages/}, uso exclusivo de localizadores semánticos (\texttt{getByRole}), flujo completo de compra y aserciones web-first. & Flujos funcionales pero mezcla selectores directos en los tests o usa selectores CSS frágiles. & Pruebas incompletas, ausencia de POM o uso abusivo de pausas fijas (\texttt{waitForTimeout}). \\ \hline
+\textbf{2.3. Network Mocking \& Resiliencia} & \textbf{1.0} & Interceptación elegante con \texttt{page.route()} simulando error 500 y latencia, verificación de retroalimentación en UI y uso de Trace Viewer. & Simulación básica de mock sin validación de estados de carga ni manejo de errores en UI. & No implementa interceptación de red o pruebas fallan por mal manejo de promesas. \\ \hline
+\textbf{2.4. CI/CD Pipeline en GitHub Actions} & \textbf{1.0} & Workflow automatizado, instalación de navegadores con dependencias (\texttt{--with-deps}), ejecución headless y reporte HTML con \texttt{if: always()}. & Pipeline funcional pero sin persistencia adecuada de artefactos o falla intermitentemente. & Pipeline inexistente, sintaxis YAML inválida o permanentemente en estado fallido (\textit{Failing}). \\ \hline
+\textbf{3.1. Cuestionario \& Bitácora IAG} & \textbf{0.7} & Respuestas técnicas profundas a las 5 preguntas del cuestionario con análisis riguroso y bitácora ética y crítica de uso de IAG. & Respuestas breves con justificación superficial o bitácora de prompts incompleta. & Respuestas erróneas conceptualmente o ausencia de la sección de análisis. \\ \hline
+\rowcolor{icesiLight}
+\textbf{CALIFICACIÓN TOTAL} & \textbf{5.0} & \multicolumn{3}{c|}{\textbf{Escala Institucional Universidad Icesi: Aprobatoria $\ge$ 3.0 $\bullet$ Duración Máxima: 2 Horas}} \\ \hline
+\end{tabularx}
+
+\vspace{0.20cm}
+
+% =========================================================================
+% SECCIÓN DE ENTREGABLES
+% =========================================================================
+\noindent
+{\color{icesiBlue}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont INSTRUCCIONES DE ENTREGA} \hfill {\fontsize{7.5}{9}\selectfont\color{icesiMuted}\textbf{MODALIDAD}}\\[-0.22cm]
+{\color{icesiBorder}\hrule height 0.5pt}\vspace{0.08cm}
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt,topsep=2pt]
+  \item \textbf{Repositorio en GitHub:} Subir el código fuente completo con \texttt{pages/}, \texttt{tests/}, configuración de Playwright y workflow en \texttt{.github/workflows/e2e-playwright.yml}. La rama evaluada debe exhibir el último commit con el pipeline en \textbf{Verde (\textit{Passing})}.
+  \item \textbf{Documento de Resultados (PDF):} Adjuntar en la plataforma institucional este documento debidamente diligenciado con:
+    \begin{itemize}[itemsep=1pt]
+      \item Nombres y códigos de los dos integrantes del equipo.
+      \item Enlace web al repositorio en GitHub.
+      \item Captura de pantalla del reporte HTML de Playwright (\texttt{playwright-report/index.html}) con el 100\% de las pruebas pasando en los tres motores.
+      \item Captura de pantalla de la ejecución exitosa de la acción en GitHub Actions con el artefacto descargado.
+      \item Respuestas detalladas al cuestionario conceptual y bitácora ética de uso de IAG de la Sección 3.
+    \end{itemize}
+\end{enumerate}
+
+\end{document}

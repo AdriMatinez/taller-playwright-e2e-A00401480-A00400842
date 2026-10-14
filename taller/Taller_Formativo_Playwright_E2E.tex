@@ -1,0 +1,371 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{geometry}
+\geometry{margin=0.68in, top=0.85in, bottom=0.78in, headheight=36pt, headsep=14pt}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{lastpage}
+\usepackage{setspace}
+\usepackage{listings}
+
+% Tipografía institucional Icesi (Sans-Serif Helvetica)
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Interlineado aumentado un 30% (setstretch 1.38) para mayor holgura y lectura óptima
+\setstretch{1.38}
+
+% Altura de celdas en tablas
+\renewcommand{\arraystretch}{1.25}
+
+% Paleta de Colores Oficial de los Programas Icesi
+\definecolor{icesiBlue}{HTML}{5454E9}       % Azul vibrante institucional
+\definecolor{icesiOrange}{HTML}{F0681A}     % Naranja acento
+\definecolor{icesiGreen}{HTML}{4CB978}      % Verde acento
+\definecolor{icesiPurple}{HTML}{865CF0}     % Púrpura acento
+\definecolor{icesiDark}{HTML}{1A1A1A}       % Texto principal oscuro
+\definecolor{icesiMuted}{HTML}{6B7280}      % Gris metadatos
+\definecolor{icesiBorder}{HTML}{D1D5DB}     % Líneas y bordes
+\definecolor{icesiRowLine}{HTML}{E5E7EB}    % Líneas de tabla
+\definecolor{icesiLight}{HTML}{F9FAFB}      % Fondo suave
+\definecolor{codeBackground}{HTML}{F3F4F6}  % Fondo código
+
+% Configuración de Listings
+\lstdefinestyle{bashstyle}{
+    backgroundcolor=\color{codeBackground},
+    commentstyle=\color{icesiMuted}\itshape,
+    keywordstyle=\color{icesiBlue}\bfseries,
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{icesiBorder},
+    language=bash,
+    aboveskip=2pt,
+    belowskip=2pt
+}
+
+\lstdefinestyle{codeStyle}{
+    backgroundcolor=\color{codeBackground},
+    commentstyle=\color{icesiMuted}\itshape,
+    keywordstyle=\color{icesiBlue}\bfseries,
+    stringstyle=\color{icesiGreen},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{icesiBorder},
+    aboveskip=2pt,
+    belowskip=2pt
+}
+
+% =========================================================================
+% ENCABEZADO Y PIE DE PÁGINA ESTILO PROGRAMA DE CURSO ICESI
+% =========================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{%
+  \begin{minipage}[c]{2.8cm}
+    \includegraphics[height=0.58cm]{logo-icesi.png}
+  \end{minipage}%
+  \hspace{0.15cm}%
+  {\color{icesiBorder}\vrule width 0.8pt height 0.60cm}%
+  \hspace{0.2cm}%
+  \begin{minipage}[c]{10.5cm}
+    \fontsize{7.5}{9.5}\selectfont\textbf{\color{icesiDark}UNIVERSIDAD ICESI} \\
+    \fontsize{7}{9}\selectfont\textbf{\color{icesiDark}PROGRAMA DE CURSO / GUÍA PRÁCTICA FORMATIVA: INGENIERÍA DE SOFTWARE V} \\
+    \fontsize{6.5}{8.5}\selectfont\color{icesiMuted}Período: 202620 $\bullet$ NRC: 11005 $\bullet$ Semana 10 $\bullet$ Duración: 2 Horas
+  \end{minipage}%
+}
+\fancyhead[R]{\fontsize{7.5}{9.5}\selectfont\color{icesiMuted}Pág. \thepage\ de \pageref{LastPage}}
+
+% Barra horizontal multicolor característica del programa de curso
+\renewcommand{\headrule}{%
+  \vspace{0.08cm}%
+  \noindent%
+  \textcolor{icesiBlue}{\rule{0.60\textwidth}{1.8pt}}%
+  \textcolor{icesiOrange}{\rule{0.18\textwidth}{1.8pt}}%
+  \textcolor{icesiGreen}{\rule{0.11\textwidth}{1.8pt}}%
+  \textcolor{icesiPurple}{\rule{0.11\textwidth}{1.8pt}}%
+}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[L]{\fontsize{7.5}{9.5}\selectfont\color{icesiMuted}Ingeniería de Software V (09776 - TIC) $\bullet$ Taller Formativo: Pruebas E2E con Playwright}
+\fancyfoot[R]{\fontsize{7.5}{9.5}\selectfont\color{icesiMuted}Universidad Icesi $\bullet$ DCSI}
+
+% =========================================================================
+% COMANDOS DE SECCIONES CON BADGE ESTILO PROGRAMA ICESI
+% =========================================================================
+\newcommand{\sectionBadge}[1]{%
+  \refstepcounter{section}%
+  \vspace{0.16cm}%
+  \noindent%
+  \colorbox{icesiBlue}{\color{white}\rule[-0.08cm]{0pt}{0.42cm}\hspace{0.16cm}\textbf{\normalsize \thesection}\hspace{0.16cm}}%
+  \hspace{0.18cm}%
+  {\fontsize{9.5}{12}\selectfont\textbf{\color{icesiDark}#1}}\\[-0.10cm]%
+  \noindent{\color{icesiDark}\rule{\textwidth}{0.8pt}}\vspace{0.06cm}%
+}
+
+\titleformat{\subsection}
+  {\color{icesiBlue}\normalfont\normalsize\bfseries}
+  {\thesubsection}{0.4em}{}
+\titlespacing*{\subsection}{0pt}{0.4ex plus 0.2ex minus .1ex}{0.2ex plus .1ex}
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\begin{document}
+
+% =========================================================================
+% TÍTULO Y PRESENTACIÓN INICIAL (PÁGINA 1)
+% =========================================================================
+\noindent
+{\fontsize{8.5}{11}\selectfont\textbf{\color{icesiBlue}GUÍA PRÁCTICA FORMATIVA: PRUEBAS END-TO-END (E2E) CON PLAYWRIGHT}}\\[0.06cm]
+{\fontsize{15}{18}\selectfont\textbf{Ingeniería de Software V --- Semana 10 (Período 2026-2)}}\\[0.10cm]
+{\fontsize{8.5}{11}\selectfont\color{icesiMuted}\textbf{Cúspide de la Pirámide: Auto-Waiting, Page Object Model (POM), Network Mocking y CI Headless}}\\[0.04cm]
+{\color{icesiRowLine}\hrule height 0.6pt}\vspace{0.10cm}
+
+\noindent
+{\color{icesiBlue}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont FACULTAD DE INGENIERÍA, DISEÑO Y CIENCIAS APLICADAS} \hfill
+{\color{icesiOrange}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont DEPARTAMENTO DE COMPUTACIÓN Y SISTEMAS INTELIGENTES}\\[0.06cm]
+{\color{icesiRowLine}\hrule height 0.6pt}\vspace{0.10cm}
+
+% =========================================================================
+% TABLA DE INFORMACIÓN Y METADATOS FORMATIVOS
+% =========================================================================
+\noindent
+{\color{icesiBlue}\textbf{\rule{2.5pt}{8.5pt}}}~\textbf{\fontsize{8.5}{11}\selectfont INFORMACIÓN DE LA ACTIVIDAD} \hfill {\fontsize{7.5}{9}\selectfont\color{icesiMuted}\textbf{IDENTIFICACIÓN}}\\[-0.22cm]
+{\color{icesiBorder}\hrule height 0.5pt}\vspace{0.05cm}
+
+\noindent
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries\color{icesiDark}\fontsize{7.5}{9.5}\selectfont}L{2.5cm}X!{\color{icesiBlue}\vrule width 0.8pt}>{\bfseries\color{icesiDark}\fontsize{7.5}{9.5}\selectfont}L{2.5cm}X}
+CÓDIGO: & 09776 - TIC & PERÍODO: & 202620 (Semestre 2026-2) \\ \hline
+\rowcolor{icesiLight}
+NRC / GRUPO: & 11005 / Grupo 001 & PONDERACIÓN: & \textbf{Formativa} (Sin calificación sumativa) $\bullet$ Duración: 2 Horas \\ \hline
+POLÍTICA IAG: & Nivel 3: Colaboración Asistida & MODALIDAD: & Parejas / Práctica de Laboratorio Guiada \\ \hline
+\rowcolor{icesiLight}
+ESTUDIANTE 1: & \rule{4.5cm}{0.4pt} & CÓDIGO: & \rule{2.2cm}{0.4pt} \\ \hline
+ESTUDIANTE 2: & \rule{4.5cm}{0.4pt} & CÓDIGO: & \rule{2.2cm}{0.4pt} \\ \hline
+\end{tabularx}
+
+\vspace{0.10cm}
+
+% =========================================================================
+% SECCIÓN 1: CONTEXTO Y DESCRIPCIÓN DEL RETO
+% =========================================================================
+\sectionBadge{Contexto del Problema \& Aseguramiento de Calidad E2E}
+
+\subsection{Descripción del Reto de Ingeniería de Software}
+En las sesiones anteriores consolidamos la base de la pirámide de calidad: pruebas unitarias con JUnit 5, cobertura con JaCoCo y análisis estático SAST con SonarQube dentro de pipelines de Jenkins. No obstante, una aplicación puede tener 100\% de cobertura unitaria y fallar ante el usuario real debido a incompatibilidades de navegador, renderizado CSS asíncrono o ruptura en los flujos de interacción del cliente web.
+
+En esta guía práctica formativa, los estudiantes implementarán una suite profesional de pruebas \textbf{End-to-End (E2E)} con \textbf{Playwright} sobre la aplicación \textbf{Product Management CRUD} (React 18 + TypeScript + API REST). El objetivo es aprender a estructurar pruebas resilientes aplicando:
+\begin{enumerate}[itemsep=1pt]
+  \item \textbf{Auto-waiting y locators de accesibilidad (W3C/ARIA):} Eliminar pausas fijas arbitrarias (\texttt{sleep}) usando selectores semánticos orientados al usuario.
+  \item \textbf{Page Object Model (POM):} Aislar la lógica de interacción con la UI de las aserciones de prueba para garantizar mantenibilidad.
+  \item \textbf{Network Mocking:} Interceptar llamadas HTTP (\texttt{page.route}) para validar la respuesta de la interfaz ante caídas del servidor sin alterar el backend.
+  \item \textbf{Validación opcional en CI/CD:} Ejecución desatendida (\textit{headless}) en GitHub Actions con publicación de trazas forenses en caso de fallo.
+\end{enumerate}
+
+\vspace{0.08cm}
+\noindent
+\small
+\begin{tabularx}{\textwidth}{|L{2.8cm}|X|L{3.5cm}|}
+\hline
+\rowcolor{icesiLight}
+\textbf{Componente} & \textbf{Tecnología \& Stack} & \textbf{Puerto / Endpoint} \\ \hline
+\textbf{Aplicación Web (SPA)} & React 18, Vite, TypeScript, TailwindCSS & Puerto \texttt{3000} (\texttt{http://localhost:3000}) \\ \hline
+\textbf{API REST Backend} & Node Mock Server / Spring Boot REST & Puerto \texttt{8080} (\texttt{/api/v1/products}) \\ \hline
+\textbf{Suite E2E Playwright} & Playwright Test Runner, TypeScript & Motores: Chromium, Firefox, WebKit \\ \hline
+\textbf{CI/CD (Opcional)} & GitHub Actions (\texttt{e2e-playwright.yml}) & Modo Headless + HTML Report Artifacts \\ \hline
+\end{tabularx}
+
+\newpage
+
+% =========================================================================
+% PÁGINA 2: PROCEDIMIENTO EXPERIMENTAL PASO A PASO
+% =========================================================================
+\sectionBadge{Procedimiento Experimental Paso a Paso}
+
+\subsection{Fase 1: Puesta en Marcha del Código Base y Tooling (15 min)}
+Ubíquese en el directorio del código base suministrado (\texttt{codigo\_base/}) e instale las dependencias de la aplicación y de Playwright:
+\begin{lstlisting}[style=bashstyle]
+cd codigo_base
+# 1. Instalar dependencias del proyecto y Playwright
+npm install
+
+# 2. Descargar los navegadores oficiales de Playwright (Chromium, Firefox, WebKit)
+npx playwright install --with-deps
+
+# 3. Iniciar la aplicacion web y el servidor mock en segundo plano:
+npm run dev
+\end{lstlisting}
+Verifique en su navegador local que la aplicación responde correctamente en \texttt{http://localhost:3000}.
+
+\subsection{Fase 2: Configuración Multi-Navegador en \texttt{playwright.config.ts} (15 min)}
+Inspeccione el archivo de configuración central \texttt{playwright.config.ts} asegurando los siguientes parámetros de ejecución:
+\begin{lstlisting}[style=codeStyle]
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e/tests',
+  fullyParallel: true,
+  retries: 1,                          // 1 reintento para aislar flakiness de red
+  reporter: [['html', { open: 'never' }], ['list']],
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',           // Capturar traza forense al fallar
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
+});
+\end{lstlisting}
+
+\subsection{Fase 3: Implementación del Page Object Model (POM) (30 min)}
+En \texttt{e2e/pages/ProductPage.ts}, construya la clase que encapsula los locators y métodos de interacción con el catálogo de productos. Utilice selectores de accesibilidad semántica:
+\begin{lstlisting}[style=codeStyle]
+import { Page, Locator } from '@playwright/test';
+
+export class ProductPage {
+  readonly page: Page;
+  readonly nameInput: Locator;
+  readonly priceInput: Locator;
+  readonly submitButton: Locator;
+  readonly successAlert: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.nameInput = page.getByLabel('Nombre del Producto');
+    this.priceInput = page.getByLabel('Precio');
+    this.submitButton = page.getByRole('button', { name: 'Registrar Producto' });
+    this.successAlert = page.getByRole('alert');
+  }
+
+  async goto() {
+    await this.page.goto('/');
+  }
+
+  async createProduct(name: string, price: string) {
+    await this.nameInput.fill(name);
+    await this.priceInput.fill(price);
+    await this.submitButton.click();
+  }
+}
+\end{lstlisting}
+
+\subsection{Fase 4: Pruebas de Interacción y Network Mocking (30 min)}
+En \texttt{e2e/tests/products.spec.ts}, escriba las pruebas para el flujo feliz y para la simulación de caída HTTP 500:
+\begin{lstlisting}[style=codeStyle]
+import { test, expect } from '@playwright/test';
+import { ProductPage } from '../pages/ProductPage';
+
+test.describe('Gestion de Productos - E2E Suite', () => {
+  test('Flujo Feliz: Crear producto y verificar en la tabla', async ({ page }) => {
+    const productPage = new ProductPage(page);
+    await productPage.goto();
+
+    await productPage.createProduct('Monitor 4K', '1250000');
+
+    // Aserciones Web-First con auto-retry
+    await expect(productPage.successAlert).toHaveText('Producto creado exitosamente');
+    await expect(page.getByRole('cell', { name: 'Monitor 4K' })).toBeVisible();
+  });
+
+  test('Resiliencia: Manejar error 500 del backend mediante Network Mocking', async ({ page }) => {
+    // Interceptar la llamada POST a la API REST
+    await page.route('**/api/v1/products', async route => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Error interno en la base de datos' })
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    const productPage = new ProductPage(page);
+    await productPage.goto();
+    await productPage.createProduct('Teclado Mecanico', '350000');
+
+    // Validar que el frontend muestra alerta de error y no se congela
+    await expect(page.getByRole('alert')).toContainText('Error al procesar el producto');
+  });
+});
+\end{lstlisting}
+
+\subsection{Fase 5: Diagnóstico con Trace Viewer y Ejecución Headless (15 min)}
+Ejecute la suite completa y examine las herramientas de diagnóstico:
+\begin{lstlisting}[style=bashstyle]
+# Ejecutar todas las pruebas en modo headless
+npx playwright test
+
+# En caso de fallo o inspeccion visual, abrir el reporte HTML interactivo:
+npx playwright show-report
+\end{lstlisting}
+
+\subsection{Fase 6 (OPCIONAL): Validación Automatizada en Pipeline CI/CD}
+Para los equipos que deseen integrar esta verificación en su pipeline de integración continua, cree el archivo \texttt{.github/workflows/e2e-playwright.yml}:
+\begin{lstlisting}[style=codeStyle]
+name: E2E Playwright Suite
+on: [push, pull_request]
+
+jobs:
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install dependencies & Playwright Browsers
+        run: |
+          npm ci
+          npx playwright install --with-deps
+      - name: Run E2E Tests Headless
+        run: npm run test:e2e
+      - name: Upload HTML Report on Failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+\end{lstlisting}
+
+% =========================================================================
+% PÁGINA 3: CUESTIONARIO Y CHECKLIST FORMATIVO
+% =========================================================================
+\sectionBadge{Cuestionario de Reflexión Conceptual \& Checklist Formativo}
+
+\subsection{Preguntas de Reflexión Técnica}
+\begin{enumerate}[leftmargin=*,itemsep=3pt]
+  \item \textbf{Actionability y Auto-Waiting:} ¿De qué manera los mecanismos internos de Playwright (comprobación de visibilidad, estabilidad y eventos) eliminan la necesidad de usar \texttt{sleep()} arbitrarios en las pruebas?
+  \item \textbf{Locators W3C/ARIA vs XPath:} ¿Por qué escribir selectores basados en accesibilidad (\texttt{getByRole}, \texttt{getByLabel}) no solo hace las pruebas más resilientes a cambios de diseño, sino que promueve mejores prácticas de accesibilidad web?
+  \item \textbf{Network Mocking vs Pruebas de Integración Reales:} ¿En qué casos de prueba es conveniente interceptar peticiones de red y cuándo es obligatorio probar el backend real conectado a la base de datos?
+\end{enumerate}
+
+\subsection{Checklist de Logro Formativo (Autoevaluación)}
+\small
+\begin{tabularx}{\textwidth}{|L{4.2cm}|X|C{2.5cm}|}
+\hline
+\rowcolor{icesiLight}
+\textbf{Objetivo Formativo} & \textbf{Evidencia Observable} & \textbf{Estado} \\ \hline
+\textbf{1. Configuración Multi-Motor} & Playwright ejecuta pruebas limpiamente en Chromium, Firefox y WebKit. & [ ] Logrado \\ \hline
+\textbf{2. Page Object Model (POM)} & Selectores y acciones encapsulados en clase \texttt{ProductPage.ts}. & [ ] Logrado \\ \hline
+\textbf{3. Network Mocking} & Intercepción de fallo HTTP 500 y verificación de respuesta en la UI. & [ ] Logrado \\ \hline
+\textbf{4. Diagnóstico Forense} & Inspección de reporte HTML y trazas paso a paso con Trace Viewer. & [ ] Logrado \\ \hline
+\textbf{5. CI/CD (Opcional)} & Pipeline en GitHub Actions configurado con reporte en artefactos. & [ ] Opcional \\ \hline
+\end{tabularx}
+
+\end{document}
