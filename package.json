@@ -1,14 +1,18 @@
 {
   "name": "playwright-e2e-product-crud",
   "version": "1.0.0",
-  "description": "Taller Formativo E2E con Playwright - Ingesoft V Universidad Icesi",
+  "description": "Taller Formativo y Evaluativo E2E con Playwright - Ingesoft V Universidad Icesi",
   "scripts": {
     "server": "node server/server.js",
     "client": "vite --config frontend/vite.config.ts",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:trace": "playwright test --trace on"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.1",

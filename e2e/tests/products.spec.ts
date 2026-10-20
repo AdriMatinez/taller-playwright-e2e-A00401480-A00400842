@@ -10,37 +10,54 @@ test.describe('Suite E2E: Catálogo de Productos', () => {
     await productPage.goto();
   });
 
-  test('Prueba 1 (Happy Path): Debe registrar un producto y reflejarlo en la tabla', async ({ page }) => {
-    // TODO:
-    // 1. Definir datos de prueba dinámicos (nombre único con Date.now() y precio)
-    // 2. Invocar createProduct en productPage pasando nombre, precio y categoría
-    // 3. Validar con aserciones Web-First (expect(...).toBeVisible(), toHaveText) que aparezca la alerta de éxito:
-    //    'Producto creado exitosamente'
-    // 4. Obtener la fila de la tabla con productPage.getProductRow(...) y verificar visibilidad de la fila y celda de categoría
+  test('Prueba 1 (Happy Path): Debe registrar un producto y reflejarlo en la tabla', async () => {
+    const name = `Teclado Mecánico ${Date.now()}`;
+
+    await productPage.createProduct(name, '250000', 'Periféricos');
+
+    await expect(productPage.alertBox).toBeVisible();
+    await expect(productPage.alertBox).toHaveText('Producto creado exitosamente');
+
+    const row = productPage.getProductRow(name);
+    await expect(row).toBeVisible();
+    await expect(row.getByRole('cell', { name: 'Periféricos' })).toBeVisible();
   });
 
-  test('Prueba 2 (Validación de Formulario): No permite registrar campos vacíos', async ({ page }) => {
-    // TODO:
-    // 1. Intentar enviar el formulario sin llenar los campos (clic en submitButton)
-    // 2. Verificar con aserciones Web-First que alertBox sea visible y contenga el mensaje de error:
-    //    'Todos los campos son obligatorios'
+  test('Prueba 2 (Validación de Formulario): No permite registrar campos vacíos', async () => {
+    await productPage.submitButton.click();
+
+    await expect(productPage.alertBox).toBeVisible();
+    await expect(productPage.alertBox).toContainText('Todos los campos son obligatorios');
   });
 
   test('Prueba 3 (Network Mocking): Manejo resiliente de error 500 del servidor', async ({ page }) => {
-    // TODO:
-    // 1. Interceptar solicitudes de red hacia la API con page.route('**/api/v1/products', ...)
-    // 2. Si el método HTTP es 'POST', simular fallo con route.fulfill({ status: 500, contentType: 'application/json', body: ... })
-    //    En caso contrario, invocar route.continue()
-    // 3. Intentar crear un producto mediante productPage.createProduct(...)
-    // 4. Verificar que la interfaz maneje el fallo mostrando alertBox con el mensaje:
-    //    'Error al procesar el producto'
+    await page.route('**/api/v1/products', async route => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: 'Error interno del servidor' }),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await productPage.createProduct(`Producto Fallido ${Date.now()}`, '100000');
+
+    await expect(productPage.alertBox).toBeVisible();
+    await expect(productPage.alertBox).toContainText('Error al procesar el producto');
   });
 
-  test('Prueba 4 (Eliminación): Debe eliminar un producto existente de la lista', async ({ page }) => {
-    // TODO:
-    // 1. Crear un producto temporal mediante productPage.createProduct(...)
-    // 2. Verificar que la fila del producto sea visible en la tabla
-    // 3. Invocar deleteProduct en productPage pasando el nombre del producto
-    // 4. Validar con aserción Web-First que la fila ya no sea visible en el DOM (not.toBeVisible())
+  test('Prueba 4 (Eliminación): Debe eliminar un producto existente de la lista', async () => {
+    const name = `Producto Temporal ${Date.now()}`;
+
+    await productPage.createProduct(name, '99000');
+    const row = productPage.getProductRow(name);
+    await expect(row).toBeVisible();
+
+    await productPage.deleteProduct(name);
+
+    await expect(row).not.toBeVisible();
   });
 });
